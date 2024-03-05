@@ -10,7 +10,7 @@ app = Flask(__name__, static_folder='static')
 csrf = CSRFProtect(app)
 
 # WEBSITE_HOSTNAME exists only in production environment
-if 'http://lab3test.azurewebsites.net/' not in os.environ:
+if 'lab3test.azurewebsites' not in os.environ:
     # local development, where we'll use environment variables
     print("Loading config.development and environment variables from .env file.")
     app.config.from_object('azureproject.development')
