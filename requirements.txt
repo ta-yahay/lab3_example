@@ -5,3 +5,7 @@ flask_wtf
 psycopg2
 python-dotenv
 SQLAlchemy
+requests
+azure.identity
+azure.keyvault.secrets
+azure.storage.queue
