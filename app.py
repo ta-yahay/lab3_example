@@ -10,23 +10,40 @@ app = Flask(__name__, static_folder='static')
 csrf = CSRFProtect(app)
 
 # WEBSITE_HOSTNAME exists only in production environment
-if 'WEBSITE_HOSTNAME' not in os.environ:
-    # local development, where we'll use environment variables
-    print("Loading config.development and environment variables from .env file.")
-    app.config.from_object('azureproject.development')
-else:
-    # production
-    print("Loading config.production.")
-    app.config.from_object('azureproject.production')
+# if 'WEBSITE_HOSTNAME' not in os.environ:
+#     # local development, where we'll use environment variables
+#     print("Loading config.development and environment variables from .env file.")
+#     app.config.from_object('azureproject.development')
+# else:
+#     # production
+#     print("Loading config.production.")
+#     app.config.from_object('azureproject.production')
 
-app.config.update(
-    SQLALCHEMY_DATABASE_URI=app.config.get('DATABASE_URI'),
-    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+# app.config.update(
+#     SQLALCHEMY_DATABASE_URI=app.config.get('DATABASE_URI'),
+#     SQLALCHEMY_TRACK_MODIFICATIONS=False,
+# )
+
+# # Initialize the database connection
+# db = SQLAlchemy(app)
+conn_str = os.environ['AZURE_POSTGRESQL_CONNECTIONSTRING']
+conn_str_params = {pair.split('=')[0]: pair.split('=')[1] for pair in conn_str.split(' ')}
+
+db='postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
+    dbuser=conn_str_params['user'],
+    dbpass=conn_str_params['password'],
+    dbhost=conn_str_params['host'],
+    dbname=conn_str_params['dbname']
 )
 
-# Initialize the database connection
-db = SQLAlchemy(app)
+# dbname=studentnamestudentid-database host=studentnamestudentid-server.postgres.database.azure.com port=5432 sslmode=require user=vffzegkyym password=E1GFFL40SQ16UJRY$
 
+DATABASE_URI = 'postgresql+psycopg2://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
+    dbuser=conn_str_params['user'],
+    dbpass=conn_str_params['password'],
+    dbhost=conn_str_params['host'],
+    dbname=conn_str_params['dbname']
+)
 # Enable Flask-Migrate commands "flask db init/migrate/upgrade" to work
 migrate = Migrate(app, db)
 
